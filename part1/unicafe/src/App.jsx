@@ -28,7 +28,8 @@ const Button = ({ onClicked, text }) => (
   </button>
 )
 
-const Statistics = ({ good, neutral, bad }) => {
+const Statistics = (props) => {
+  const { good, neutral, bad } = props
   const all = good + neutral + bad
   const average = all === 0 ? 0 : (good - bad) / all
   const positive = all === 0 ? 0 : good / all * 100
