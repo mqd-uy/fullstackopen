@@ -6,7 +6,7 @@ const Course = ({ course }) => (
     </div>
 )
 
-const Header = ({ text }) => <h1>{text}</h1>
+const Header = ({ text }) => <h2>{text}</h2>
 
 const Content = ({ parts }) => (
     <div>
