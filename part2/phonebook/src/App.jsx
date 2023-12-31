@@ -21,16 +21,19 @@ const App = () => {
 
   const shownPersons = persons.filter(person => person.name.toLocaleLowerCase().includes(searchFilter.toLowerCase()))
 
-
-
   const personAdded = event => {
     event.preventDefault()
     const newPersonObject = {
       name: newName,
       number: newNumber
     }
-    if (persons.find(person => person.name === newPersonObject.name) !== undefined) {
-      alert(`${newPersonObject.name} is alredy added to phonebook`)
+    const personSearched = persons.find(person => person.name === newPersonObject.name)
+    if (personSearched !== undefined) {
+      const personToUpdate = {
+        ...personSearched,
+        number: newNumber
+      }
+      updatePerson(personToUpdate)
     } else {
       phonebook
         .addPerson(newPersonObject)
@@ -38,6 +41,15 @@ const App = () => {
       setNewName('')
       setNewNumber('')
     }
+  }
+
+  const updatePerson = (person) => {
+    if (window.confirm(`${person.name} is already added to phonebook, replace the old number with a new one?`))
+      phonebook.updatePerson(person)
+        .then(personUpdated =>
+          setPersons(persons.map(
+            person => person.id !== personUpdated.id ? person : personUpdated
+          )))
   }
 
   const handleDeletePerson = (person) => {
@@ -70,6 +82,7 @@ const App = () => {
     </div>
   )
 }
+
 
 const Person = ({ person, handleDeletePerson }) =>
   <p>
