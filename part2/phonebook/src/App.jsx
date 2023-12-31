@@ -40,6 +40,15 @@ const App = () => {
     }
   }
 
+  const handleDeletePerson = (person) => {
+    if (window.confirm(`Delete ${person.name} ?`))
+      phonebook.deletePerson(person.id)
+        .then(isDeleted => {
+          if (isDeleted)
+            setPersons(persons.filter(p => p.id !== person.id))
+        })
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -57,16 +66,21 @@ const App = () => {
         }}
       />
       <h3>Numbers</h3>
-      <Persons persons={shownPersons} />
+      <Persons persons={shownPersons} handleDeletePerson={handleDeletePerson} />
     </div>
   )
 }
 
-const Person = ({ person }) => <p>{person.name} {person.number}</p>
+const Person = ({ person, handleDeletePerson }) =>
+  <p>
+    {person.name}
+    {person.number}
+    <button onClick={() => handleDeletePerson(person)}>delete</button>
+  </p>
 
-const Persons = ({ persons }) => (
+const Persons = ({ persons, handleDeletePerson }) => (
   <div>
-    {persons.map(person => <Person key={person.name} person={person} />)}
+    {persons.map(person => <Person key={person.name} person={person} handleDeletePerson={handleDeletePerson} />)}
   </div>
 )
 

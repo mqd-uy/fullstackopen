@@ -12,5 +12,10 @@ const addPerson = object =>
         .post(baseUrl, object)
         .then(response => response.data)
 
+const deletePerson = id =>
+    axios
+        .delete(`${baseUrl}/${id}`)
+        .then(() => true)
 
-export default { getAll, addPerson }
+
+export default { getAll, addPerson, deletePerson }
