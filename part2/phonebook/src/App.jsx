@@ -24,6 +24,14 @@ const App = () => {
 
   const shownPersons = persons.filter(person => person.name.toLocaleLowerCase().includes(searchFilter.toLowerCase()))
 
+  const addPerson = person => {
+    return axios
+      .post('http://localhost:3001/persons', person)
+      .then(response => {
+        return response.data
+      })
+  }
+
   const personAdded = event => {
     event.preventDefault()
     const newPersonObject = {
@@ -33,7 +41,7 @@ const App = () => {
     if (persons.find(person => person.name === newPersonObject.name) !== undefined) {
       alert(`${newPersonObject.name} is alredy added to phonebook`)
     } else {
-      setPersons(persons.concat(newPersonObject))
+      addPerson(newPersonObject).then(data => setPersons(persons.concat(data)))
       setNewName('')
       setNewNumber('')
     }
