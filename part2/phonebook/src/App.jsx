@@ -7,6 +7,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [searchFilter, setSearchFilter] = useState('')
   const [successMessage, setSuccessMessage] = useState(null)
+  const [failMessage, setFailMessage] = useState(null)
 
   useEffect(() => {
     phonebook
@@ -43,7 +44,7 @@ const App = () => {
           setNewName('')
           setNewNumber('')
           setSuccessMessage(`Added ${newPersonObject.name}`)
-          setTimeout(() => setSuccessMessage(null), 2000)
+          setTimeout(() => setSuccessMessage(null), 3000)
         })
     }
   }
@@ -56,7 +57,12 @@ const App = () => {
             person => person.id !== personUpdated.id ? person : personUpdated
           ))
           setSuccessMessage(`Updated ${personUpdated.name}`)
-          setTimeout(() => setSuccessMessage(null), 2000)
+          setTimeout(() => setSuccessMessage(null), 3000)
+        })
+        .catch(() => {
+          setPersons(persons.filter(p => p.id !== person.id))
+          setFailMessage(`Information of ${person.name} has already been removed from server`)
+          setTimeout(() => setFailMessage(null), 3000)
         })
   }
 
@@ -67,12 +73,18 @@ const App = () => {
           if (isDeleted)
             setPersons(persons.filter(p => p.id !== person.id))
         })
+        .catch(() => {
+          setPersons(persons.filter(p => p.id !== person.id))
+          setFailMessage(`Information of ${person.name} has already been removed from server`)
+          setTimeout(() => setFailMessage(null), 3000)
+        })
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
       <Success message={successMessage} />
+      <Fail message={failMessage} />
       <Filter searchFilter={searchFilter} handleSearchFilter={handleSearchFilter} />
       <h3>Add a new</h3>
       <PersonForm
@@ -128,6 +140,26 @@ const Filter = ({ searchFilter, handleSearchFilter }) => (
 const Success = ({ message }) => {
   const style = {
     color: 'green',
+    background: 'lightgrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10
+  }
+  if (message === null)
+    return null
+  else
+    return (
+      <div style={style}>
+        {message}
+      </div>
+    )
+}
+
+const Fail = ({ message }) => {
+  const style = {
+    color: 'red',
     background: 'lightgrey',
     fontSize: 20,
     borderStyle: 'solid',
