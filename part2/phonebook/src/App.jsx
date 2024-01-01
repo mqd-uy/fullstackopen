@@ -6,6 +6,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchFilter, setSearchFilter] = useState('')
+  const [successMessage, setSuccessMessage] = useState(null)
 
   useEffect(() => {
     phonebook
@@ -37,19 +38,26 @@ const App = () => {
     } else {
       phonebook
         .addPerson(newPersonObject)
-        .then(data => setPersons(persons.concat(data)))
-      setNewName('')
-      setNewNumber('')
+        .then(data => {
+          setPersons(persons.concat(data))
+          setNewName('')
+          setNewNumber('')
+          setSuccessMessage(`Added ${newPersonObject.name}`)
+          setTimeout(() => setSuccessMessage(null), 2000)
+        })
     }
   }
 
   const updatePerson = (person) => {
     if (window.confirm(`${person.name} is already added to phonebook, replace the old number with a new one?`))
       phonebook.updatePerson(person)
-        .then(personUpdated =>
+        .then(personUpdated => {
           setPersons(persons.map(
             person => person.id !== personUpdated.id ? person : personUpdated
-          )))
+          ))
+          setSuccessMessage(`Updated ${personUpdated.name}`)
+          setTimeout(() => setSuccessMessage(null), 2000)
+        })
   }
 
   const handleDeletePerson = (person) => {
@@ -64,6 +72,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Success message={successMessage} />
       <Filter searchFilter={searchFilter} handleSearchFilter={handleSearchFilter} />
       <h3>Add a new</h3>
       <PersonForm
@@ -115,5 +124,25 @@ const Filter = ({ searchFilter, handleSearchFilter }) => (
     filter shown with <input value={searchFilter} onChange={handleSearchFilter} />
   </div>
 )
+
+const Success = ({ message }) => {
+  const style = {
+    color: 'green',
+    background: 'lightgrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10
+  }
+  if (message === null)
+    return null
+  else
+    return (
+      <div style={style}>
+        {message}
+      </div>
+    )
+}
 
 export default App
