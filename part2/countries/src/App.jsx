@@ -39,7 +39,7 @@ function App() {
         : countriesCount > 10
           ? <p>Too many matches, specify another filter</p>
           : countriesCount > 1
-            ? <CountriesList countries={countries} />
+            ? <CountriesList countries={countries} setCountries={setCountries} />
             : <CountryDetails countrie={countries[0]} />
       }
 
@@ -47,10 +47,13 @@ function App() {
   )
 }
 
-const CountriesList = ({ countries }) => (
+const CountriesList = ({ countries, setCountries }) => (
   <ul>
     {countries.map(countrie =>
-      <li key={countrie.tld}>{countrie.name.common}</li>)}
+      <li key={countrie.tld}>{countrie.name.common}
+        <button onClick={() => setCountries([countrie])}>show</button>
+      </li>
+    )}
   </ul>
 )
 
