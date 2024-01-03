@@ -42,7 +42,6 @@ function App() {
             ? <CountriesList countries={countries} setCountries={setCountries} />
             : <CountryDetails countrie={countries[0]} />
       }
-
     </>
   )
 }
@@ -59,15 +58,54 @@ const CountriesList = ({ countries, setCountries }) => (
 
 const CountryDetails = ({ countrie }) => {
 
+  const [weather, setWeather] = useState(null)
+
+  useEffect(() => {
+    const url = 'https://api.openweathermap.org/data/2.5/weather'
+    const apiKey = import.meta.env.VITE_WEATHER_API_KEY
+
+    axios
+      .get(url, {
+        params: {
+          lat: countrie.capitalInfo.latlng[0],
+          lon: countrie.capitalInfo.latlng[1],
+          units: 'metric',
+          appid: apiKey
+        }
+      })
+      .then(response => {
+        setWeather(response.data)
+      })
+  }, [])
+
   return <div>
     <h2>{countrie.name.common}</h2>
     <p>capital {countrie.capital[0]}</p>
     <p>area {countrie.area}</p>
+
     <h3>languages:</h3>
     <ul>
       {Object.values(countrie.languages).map(language => <li key={language}>{language}</li>)}
     </ul>
     <img alt={countrie.flags.alt} src={countrie.flags.png} />
+
+    {weather
+      ? <WeatherWidget weather={weather} countrie={countrie} />
+      : null
+    }
+
+  </div>
+}
+
+const WeatherWidget = ({ weather, countrie }) => {
+
+  const imgUrl = `https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`
+
+  return <div>
+    <h3>Weather in {countrie.capital}</h3>
+    <p>temperature {weather.main.temp} Celsius</p>
+    <img alt={weather.weather[0].description} src={imgUrl} />
+    <p>wind {weather.wind.speed} m/s</p>
   </div>
 }
 
